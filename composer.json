@@ -1,0 +1,26 @@
+{
+    "name": "josephfelix/pornbot",
+    "description": "A simple bot to copy videos from porn websites",
+    "type": "project",
+    "license": "GNU GPL v3 or later",
+    "authors": [
+        {
+            "name": "Joseph Felix",
+            "email": "joseph0xfff@gmail.com"
+        }
+    ],
+    "require": {
+        "curl/curl": "^1.8",
+        "php-activerecord/php-activerecord": "^1.2",
+        "jclyons52/php-query": "^1.3"
+    },
+    "autoload": {
+        "files": [
+            "autoload.php",
+            "config.php"
+        ],
+        "psr-4": {
+            "Pornbot\\": "/"
+        }
+    }
+}
