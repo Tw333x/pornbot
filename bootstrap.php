@@ -41,7 +41,7 @@ class Bootstrap
     private function sortFromClasses()
     {
         $classes = array_values(array_filter(get_declared_classes(), function($class){
-            return get_parent_class($class) == 'Pornbot\Core\Sitebase';
+            return strpos($class, 'Pornbot\Sites') !== false && get_parent_class($class) == 'Pornbot\Core\Sitebase';
         }));
 
         if (empty($classes)) {
