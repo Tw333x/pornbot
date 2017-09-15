@@ -1,4 +1,12 @@
 <?php
+/**
+ * Version information
+ *
+ * @package    pornbot
+ * @copyright  2017 Joseph Felix
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 $directory = 'Sites';
 if (is_readable($directory)) {
     $dir = dir($directory);

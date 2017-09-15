@@ -1,4 +1,12 @@
 <?php
+/**
+ * Version information
+ *
+ * @package    pornbot
+ * @copyright  2017 Joseph Felix
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace Pornbot;
 
 /**
@@ -14,7 +22,7 @@ class Bootstrap
      */
     public static function create(array $config)
     {
-        if ($config['run'] !== 'cli' && !defined('PHP_SAPI')) {
+        if ($config['run'] !== 'cli') {
             throw new \RuntimeException('This script run only CLI');
         }
 
