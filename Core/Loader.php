@@ -24,7 +24,7 @@ class Loader
     {
         $instance = $classes['class'];
 
-        echo 'Iniciando para o site: ' . $instance->name();
+        echo 'Iniciando para o site: ', $instance->name(), PHP_EOL;
 
         $parser = null;
         switch ($instance->type()) {

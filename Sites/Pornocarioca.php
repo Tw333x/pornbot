@@ -12,7 +12,7 @@ class Pornocarioca extends \Pornbot\Core\Sitebase
 	{
 		return 'html';
 	}
-	
+
 	public function url()
 	{
 		return 'http://www.pornocarioca.com/';
@@ -20,35 +20,35 @@ class Pornocarioca extends \Pornbot\Core\Sitebase
 	
 	public function title()
 	{
-		return array(
-			'pattern' => '/<title>([^\|]+)/i',
-            'regexp' => true
-		);
+		return [
+			'pattern' => '/<title>([^\<]+)<\/title>/i',
+            'regex' => true
+		];
 	}
 	
 	public function duration()
 	{
-		return array(
+		return [
 			'pattern' => '/(\d{2}\:\d{2})\s</',
-            'regexp' => true
-		);
+            'regex' => true
+		];
 	}
 	
 	public function thumbnail()
 	{
-		return array(
+		return [
 			'pattern' => 'meta[itemprop="thumbnailUrl image"]',
 			'attr' => 'content',
-            'regexp' => false
-		);
+            'regex' => false
+		];
 	}
 	
 	public function link()
 	{
-		return array(
+		return [
 			'pattern' => 'li.list-item a',
 			'attr' => 'href',
-            'regexp' => false
-		);
+            'regex' => false
+		];
 	}
 }

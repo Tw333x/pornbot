@@ -63,6 +63,9 @@ class HTMLParser extends Parserbase
     public function prepare_link($link)
     {
         $instance = $this->instance->link;
+        if ($instance->regex) {
+            return $link;
+        }
         return $link->attr($instance->attr);
     }
 
@@ -76,7 +79,7 @@ class HTMLParser extends Parserbase
     {
         $link = $this->instance->link;
 
-        if (!$link->regexp) {
+        if (!$link->regex) {
             return $this->document->querySelectorAll($link->pattern);
         }
 
@@ -92,7 +95,7 @@ class HTMLParser extends Parserbase
     {
         $title = $this->instance->title;
 
-        if (!$title->regexp) {
+        if (!$title->regex) {
             if (!($node = $this->document->querySelector($title->pattern))) {
                 return '';
             }
@@ -112,7 +115,7 @@ class HTMLParser extends Parserbase
     {
         $duration = $this->instance->duration;
 
-        if (!$duration->regexp) {
+        if (!$duration->regex) {
             if (!($node = $this->document->querySelector($duration->pattern))) {
                 return '';
             }
@@ -132,7 +135,7 @@ class HTMLParser extends Parserbase
     {
         $thumbnail = $this->instance->thumbnail;
 
-        if (!$thumbnail->regexp) {
+        if (!$thumbnail->regex) {
 
             if (!($node = $this->document->querySelector($thumbnail->pattern))) {
                 return '';
@@ -183,13 +186,14 @@ class HTMLParser extends Parserbase
             $duration = $this->prepare_duration();
             $thumbnail = $this->prepare_thumbnail();
 
+            $data = [
+                'title'     => $title,
+                'duration'  => $duration,
+                'thumbnail' => $thumbnail,
+                'link'      => $pornurl
+            ];
+
             if ($title && $duration && $thumbnail) {
-                $data = [
-                    'title'     => $title,
-                    'duration'  => $duration,
-                    'thumbnail' => $thumbnail,
-                    'link'      => $pornurl
-                ];
 
                 try {
                     $this->getExportInstance()->process($data);
