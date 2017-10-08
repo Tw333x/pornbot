@@ -28,13 +28,15 @@ class HTMLParser extends Parserbase
 
     /**
      * Retorna a instância do phpquery para o documento da página
+     *
      * @param $url
+     *
      * @throws PornbotException
      * @return phpQuery
      */
     private function request($url)
     {
-        if (!Functions::isValidUrl($url)) {
+        if ( ! Functions::isValidUrl($url)) {
             throw new PornbotException('Link inválido: ' . $url);
         }
 
@@ -58,6 +60,7 @@ class HTMLParser extends Parserbase
      * Prepara o link do parser para a interface de tratamento
      *
      * @param $link
+     *
      * @return mixed
      */
     public function prepare_link($link)
@@ -66,6 +69,7 @@ class HTMLParser extends Parserbase
         if ($instance->regex) {
             return $link;
         }
+
         return $link->attr($instance->attr);
     }
 
@@ -73,17 +77,19 @@ class HTMLParser extends Parserbase
      * Prepara os links do parser para a interface de tratamento
      *
      * @param $url
+     *
      * @return mixed
      */
     public function prepare_links()
     {
         $link = $this->instance->link;
 
-        if (!$link->regex) {
+        if ( ! $link->regex) {
             return $this->document->querySelectorAll($link->pattern);
         }
 
         preg_match_all($link->pattern, $this->document->toString(), $result);
+
         return isset($result[1]) ? $result[1] : [];
     }
 
@@ -95,8 +101,8 @@ class HTMLParser extends Parserbase
     {
         $title = $this->instance->title;
 
-        if (!$title->regex) {
-            if (!($node = $this->document->querySelector($title->pattern))) {
+        if ( ! $title->regex) {
+            if ( ! ($node = $this->document->querySelector($title->pattern))) {
                 return '';
             }
 
@@ -104,6 +110,7 @@ class HTMLParser extends Parserbase
         }
 
         preg_match($title->pattern, $this->document->toString(), $result);
+
         return isset($result[1]) ? $result[1] : false;
     }
 
@@ -115,8 +122,8 @@ class HTMLParser extends Parserbase
     {
         $duration = $this->instance->duration;
 
-        if (!$duration->regex) {
-            if (!($node = $this->document->querySelector($duration->pattern))) {
+        if ( ! $duration->regex) {
+            if ( ! ($node = $this->document->querySelector($duration->pattern))) {
                 return '';
             }
 
@@ -124,6 +131,7 @@ class HTMLParser extends Parserbase
         }
 
         preg_match($duration->pattern, $this->document->toString(), $result);
+
         return isset($result[1]) ? $result[1] : false;
     }
 
@@ -131,31 +139,55 @@ class HTMLParser extends Parserbase
      * Prepara o thumbnail do parser para a interface de tratamento
      * @return string
      */
-    public function prepare_thumbnail()
+    public function prepare_thumbnails()
     {
         $thumbnail = $this->instance->thumbnail;
 
         if (!$thumbnail->regex) {
 
-            if (!($node = $this->document->querySelector($thumbnail->pattern))) {
+            if (!($node = $this->document->querySelectorAll($thumbnail->pattern))) {
                 return '';
             }
 
             return $node->attr($thumbnail->attr);
         }
 
-        preg_match($thumbnail->pattern, $this->document->toString(), $result);
+        preg_match_all($thumbnail->pattern, $this->document->toString(), $result);
+
+        return isset($result[1]) ? $result[1] : false;
+    }
+
+    /**
+     * Prepara as categorias do parser para a interface de tratamento
+     * @return string
+     */
+    public function prepare_category()
+    {
+        $category = $this->instance->category;
+
+        if ( ! $category->regex) {
+
+            if ( ! ($node = $this->document->querySelector($category->pattern))) {
+                return '';
+            }
+
+            return $node->attr($category->attr);
+        }
+
+        preg_match($category->pattern, $this->document->toString(), $result);
+
         return isset($result[1]) ? $result[1] : false;
     }
 
     /**
      * Retorna a instância do exportador
      * @return null|\Pornbot\Export\ExportBase
+     * @throws PornbotException
      */
     private function getExportInstance()
     {
         $export_to = Config::get('export_to');
-        $export = null;
+        $export    = null;
 
         switch ($export_to) {
             case 'wordpress':
@@ -179,18 +211,41 @@ class HTMLParser extends Parserbase
     {
         $this->document = $this->request($this->instance->url);
 
-        foreach ($this->prepare_links() as $link) {
-            $pornurl = $this->prepare_link($link);
+        $thumbnails = $this->prepare_thumbnails();
+
+        foreach ($this->prepare_links() as $key => $link) {
+            $pornurl        = $this->prepare_link($link);
             $this->document = $this->request($pornurl);
-            $title = $this->prepare_title();
+            $title          = $this->prepare_title();
+
+            if ($title === false) {
+                continue;
+            }
+
             $duration = $this->prepare_duration();
-            $thumbnail = $this->prepare_thumbnail();
+
+            if ($duration === false) {
+                continue;
+            }
+
+            $category = $this->prepare_category();
+
+            if ($category === false) {
+                continue;
+            }
+
+            if (!isset($thumbnails[$key])) {
+                continue;
+            }
+
+            $thumbnail = $thumbnails[$key];
 
             $data = [
                 'title'     => $title,
                 'duration'  => $duration,
                 'thumbnail' => $thumbnail,
-                'link'      => $pornurl
+                'link'      => $pornurl,
+                'category'  => $category
             ];
 
             if ($title && $duration && $thumbnail) {

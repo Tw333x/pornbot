@@ -37,8 +37,8 @@ class Pornocarioca extends \Pornbot\Core\Sitebase
     public function thumbnail()
     {
         return [
-            'pattern' => 'meta[itemprop="thumbnailUrl image"]',
-            'attr'    => 'content',
+            'pattern' => 'div.thumb-image img',
+            'attr'    => 'src',
             'regex'   => false
         ];
     }
@@ -48,6 +48,15 @@ class Pornocarioca extends \Pornbot\Core\Sitebase
         return [
             'pattern' => 'li.list-item a',
             'attr'    => 'href',
+            'regex'   => false
+        ];
+    }
+
+    public function category()
+    {
+        return [
+            'pattern' => 'meta[name="keywords"]',
+            'attr'    => 'content',
             'regex'   => false
         ];
     }

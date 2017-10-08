@@ -10,6 +10,8 @@
 namespace Pornbot\Export;
 
 use Pornbot\Core\Functions;
+use Pornbot\Core\Config;
+use Pornbot\Core\PornbotException;
 
 /**
  * Class Wordpress
@@ -18,18 +20,26 @@ use Pornbot\Core\Functions;
 class Wordpress extends ExportBase
 {
     /**
-     * Diretório do projeto de site porno
-     */
-    const WP_DIR = 'C:/wamp/www/porncubs';
-
-    /**
      * Método usado para processar todo conteúdo que o bot recebeu
      * @param $data
-     * @return
+     * @throws PornbotException
+     * @return void
      */
     public function process($data)
     {
-        require_once(static::WP_DIR . '/wp-load.php');
+        $wp_dir = Config::get('wp_dir');
+        $wp_load = $wp_dir . '/wp-load.php';
+
+        if (!file_exists($wp_load)) {
+            throw new PornbotException('Erro: arquivo wp-load.php não encontrado, reveja o diretório no config.php');
+        }
+
+        if (!function_exists('add_post_meta')) {
+            throw new PornbotException('Erro: função add_post_meta não encontrada');
+        }
+
+        require_once $wp_load;
+
         if ($post_id = $this->insert_post($data)) {
             $customfields = array(
                 'duracao' => $data['duration'],
@@ -46,12 +56,16 @@ class Wordpress extends ExportBase
 
     /**
      * Método usado para inserir uma postagem no wordpress
-     *
      * @param $data
      * @return mixed
+     * @throws PornbotException
      */
     private function insert_post($data)
     {
+        if (!function_exists('wp_insert_post') || !function_exists('sanitize_title')) {
+            throw new PornbotException('Erro: funções wp_insert_post e sanitize_title não encontradas');
+        }
+
         $slug = sanitize_title($data['title']);
         $attributes = array(
             'post_author' => 1,

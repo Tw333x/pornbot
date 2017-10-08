@@ -46,6 +46,12 @@ abstract class Sitebase
     abstract public function link();
 
     /**
+     * Método usado para buscar as categorias do vídeo
+     * @return mixed
+     */
+    abstract public function category();
+
+    /**
      * Converte todos os arrays retornados nos sites para objeto
      * @param $name
      * @return mixed

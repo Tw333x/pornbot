@@ -14,6 +14,7 @@ $config['db_user'] = 'root';
 $config['db_pass'] = '';
 $config['db_schema'] = 'analnymous';
 $config['export_to'] = 'wordpress';
+$config['wp_dir'] = 'C:/wamp/www/porncubs';
 $config['dirroot'] = 'C:/wamp/www/pornbot';
 $config['libdir'] = $config['dirroot'] . DIRECTORY_SEPARATOR . 'lib';
 $config['debug'] = true;
