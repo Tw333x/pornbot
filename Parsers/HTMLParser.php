@@ -143,9 +143,9 @@ class HTMLParser extends Parserbase
     {
         $thumbnail = $this->instance->thumbnail;
 
-        if (!$thumbnail->regex) {
+        if ( ! $thumbnail->regex) {
 
-            if (!($node = $this->document->querySelectorAll($thumbnail->pattern))) {
+            if ( ! ($node = $this->document->querySelectorAll($thumbnail->pattern))) {
                 return '';
             }
 
@@ -175,6 +175,28 @@ class HTMLParser extends Parserbase
         }
 
         preg_match($category->pattern, $this->document->toString(), $result);
+
+        return isset($result[1]) ? $result[1] : false;
+    }
+
+    /**
+     * Prepara o código de incorporação para a interface de tratamento
+     * @return bool|string
+     */
+    private function prepare_embed()
+    {
+        $embed = $this->instance->embed;
+
+        if ( ! $embed->regex) {
+
+            if ( ! ($node = $this->document->querySelector($embed->pattern))) {
+                return '';
+            }
+
+            return $node->attr($embed->attr);
+        }
+
+        preg_match($embed->pattern, $this->document->toString(), $result);
 
         return isset($result[1]) ? $result[1] : false;
     }
@@ -234,28 +256,32 @@ class HTMLParser extends Parserbase
                 continue;
             }
 
-            if (!isset($thumbnails[$key])) {
+            if ( ! isset($thumbnails[$key])) {
                 continue;
             }
 
             $thumbnail = $thumbnails[$key];
+
+            $embed = $this->prepare_embed();
+
+            if ($embed === false) {
+                continue;
+            }
 
             $data = [
                 'title'     => $title,
                 'duration'  => $duration,
                 'thumbnail' => $thumbnail,
                 'link'      => $pornurl,
-                'category'  => $category
+                'category'  => $category,
+                'embed'     => $embed
             ];
 
-            if ($title && $duration && $thumbnail) {
-
-                try {
-                    $this->getExportInstance()->process($data);
-                } catch (PornbotException $e) {
-                    Functions::printlog('Erro ao instanciar o exportador.');
-                    break;
-                }
+            try {
+                $this->getExportInstance()->process($data);
+            } catch (PornbotException $e) {
+                Functions::printlog($e->getMessage());
+                break;
             }
         }
     }

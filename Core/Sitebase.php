@@ -52,6 +52,12 @@ abstract class Sitebase
     abstract public function category();
 
     /**
+     * Método usado para buscar o código de incorporação do vídeo
+     * @return mixed
+     */
+    abstract public function embed();
+
+    /**
      * Converte todos os arrays retornados nos sites para objeto
      * @param $name
      * @return mixed

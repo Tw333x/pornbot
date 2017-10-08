@@ -22,6 +22,11 @@ class Config
     public static function all()
     {
         global $config;
+
+        if ($config === NULL) {
+            require 'config.php';
+        }
+
         return $config;
     }
 
@@ -33,6 +38,11 @@ class Config
     public static function get($index)
     {
         global $config;
+
+        if ($config === NULL) {
+            require 'config.php';
+        }
+
         return $config[$index];
     }
 

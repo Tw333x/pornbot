@@ -60,4 +60,13 @@ class Pornocarioca extends \Pornbot\Core\Sitebase
             'regex'   => false
         ];
     }
+
+    public function embed()
+    {
+        return [
+            'pattern' => '#emm',
+            'attr'    => 'value',
+            'regex'   => false
+        ];
+    }
 }
