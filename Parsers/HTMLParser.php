@@ -75,9 +75,6 @@ class HTMLParser extends Parserbase
 
     /**
      * Prepara os links do parser para a interface de tratamento
-     *
-     * @param $url
-     *
      * @return mixed
      */
     public function prepare_links()
@@ -89,6 +86,13 @@ class HTMLParser extends Parserbase
         }
 
         preg_match_all($link->pattern, $this->document->toString(), $result);
+
+        if (isset($result[1]) && isset($link->path) && $link->path) {
+            $url       = $this->instance->url;
+            $result[1] = array_map(function ($link) use ($url) {
+                return $url . $link;
+            }, $result[1]);
+        }
 
         return isset($result[1]) ? $result[1] : [];
     }
@@ -110,27 +114,6 @@ class HTMLParser extends Parserbase
         }
 
         preg_match($title->pattern, $this->document->toString(), $result);
-
-        return isset($result[1]) ? $result[1] : false;
-    }
-
-    /**
-     * Prepara as durações do parser para a interface de tratamento
-     * @return string
-     */
-    public function prepare_duration()
-    {
-        $duration = $this->instance->duration;
-
-        if ( ! $duration->regex) {
-            if ( ! ($node = $this->document->querySelector($duration->pattern))) {
-                return '';
-            }
-
-            return $node->attr($duration->attr);
-        }
-
-        preg_match($duration->pattern, $this->document->toString(), $result);
 
         return isset($result[1]) ? $result[1] : false;
     }
@@ -198,7 +181,17 @@ class HTMLParser extends Parserbase
 
         preg_match($embed->pattern, $this->document->toString(), $result);
 
-        return isset($result[1]) ? $result[1] : false;
+        if (!isset($result[1])) {
+            return false;
+        }
+
+        $code = $result[1];
+
+        if (strpos($code, '&lt;') !== false) {
+            $code = html_entity_decode($code);
+        }
+
+        return $code;
     }
 
     /**
@@ -231,7 +224,9 @@ class HTMLParser extends Parserbase
      */
     public function start()
     {
-        $this->document = $this->request($this->instance->url);
+        $page = $this->getPage();
+
+        $this->document = $this->request($this->instance->random($page));
 
         $thumbnails = $this->prepare_thumbnails();
 
@@ -241,12 +236,6 @@ class HTMLParser extends Parserbase
             $title          = $this->prepare_title();
 
             if ($title === false) {
-                continue;
-            }
-
-            $duration = $this->prepare_duration();
-
-            if ($duration === false) {
                 continue;
             }
 
@@ -270,7 +259,6 @@ class HTMLParser extends Parserbase
 
             $data = [
                 'title'     => $title,
-                'duration'  => $duration,
                 'thumbnail' => $thumbnail,
                 'link'      => $pornurl,
                 'category'  => $category,

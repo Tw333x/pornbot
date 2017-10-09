@@ -23,8 +23,10 @@ class Loader
     public static function init(array $classes)
     {
         $instance = $classes['class'];
+        $page = $classes['page'];
 
         echo 'Iniciando para o site: ', $instance->name(), PHP_EOL;
+        echo 'Página: ', $page, PHP_EOL;
 
         $parser = null;
         switch ($instance->type()) {
@@ -45,6 +47,7 @@ class Loader
         }
 
         $parser->setInstance($instance);
+        $parser->setPage($page);
         $parser->start();
     }
 }

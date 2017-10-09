@@ -1,11 +1,11 @@
 <?php
 namespace Pornbot\Sites;
 
-class Pornocarioca extends \Pornbot\Core\Sitebase
+class XVideos extends \Pornbot\Core\Sitebase
 {
     public function name()
     {
-        return 'pornocarioca.com';
+        return 'xvideos.com';
     }
 
     public function type()
@@ -15,12 +15,12 @@ class Pornocarioca extends \Pornbot\Core\Sitebase
 
     public function random($page)
     {
-        return 'http://www.pornocarioca.com/page/' . $page . '/';
+        return 'https://www.xvideos.com/new/' . $page . '/';
     }
 
     public function url()
     {
-        return 'http://www.pornocarioca.com/';
+        return 'https://www.xvideos.com';
     }
 
     public function title()
@@ -34,36 +34,33 @@ class Pornocarioca extends \Pornbot\Core\Sitebase
     public function thumbnail()
     {
         return [
-            'pattern' => 'div.thumb-image img',
-            'attr'    => 'src',
-            'regex'   => false
+            'pattern' => '/<img\ssrc=\"([^\"]+)\"\sid=\"pic\_/i',
+            'regex'   => true
         ];
     }
 
     public function link()
     {
         return [
-            'pattern' => 'li.list-item a',
-            'attr'    => 'href',
-            'regex'   => false
+            'pattern' => '/<p><a\s*href="(\/video\d+[^\"]+)\"\s*title=/i',
+            'regex'   => true,
+            'path'    => true
         ];
     }
 
     public function category()
     {
         return [
-            'pattern' => 'meta[name="keywords"]',
-            'attr'    => 'content',
-            'regex'   => false
+            'pattern' => '/window\.wpn\_categories\s=\s\"([^\"]+)/i',
+            'regex'   => true
         ];
     }
 
     public function embed()
     {
         return [
-            'pattern' => '#emm',
-            'attr'    => 'value',
-            'regex'   => false
+            'pattern' => '/this\.focus\(\)\;\sthis\.select\(\);\"\svalue=\'([^\']+)/i',
+            'regex'   => true
         ];
     }
 }

@@ -13,6 +13,11 @@ abstract class Parserbase
     protected $instance = null;
 
     /**
+     * @var int
+     */
+    protected $page = 1;
+
+    /**
      * Inicia o parsing do método escolhido
      * @return mixed
      */
@@ -34,5 +39,23 @@ abstract class Parserbase
     public function getInstance()
     {
         return $this->instance;
+    }
+
+    /**
+     * Altera a página a ser buscada
+     * @param $page
+     */
+    public function setPage($page)
+    {
+        $this->page = $page;
+    }
+
+    /**
+     * Busca a página que irá iniciar o crawler
+     * @return int
+     */
+    public function getPage()
+    {
+        return $this->page;
     }
 }

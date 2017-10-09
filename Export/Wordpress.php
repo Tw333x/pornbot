@@ -62,7 +62,6 @@ class Wordpress extends ExportBase
             $this->insert_thumbnail($post_id, $data);
 
             $customfields = array(
-                'duracao' => $data['duration'],
                 'views'   => 0
             );
 

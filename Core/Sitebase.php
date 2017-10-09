@@ -22,16 +22,17 @@ abstract class Sitebase
     abstract public function url();
 
     /**
+     * Retorna uma página de vídeos aleatória
+     * @param $page
+     * @return mixed
+     */
+    abstract public function random($page);
+
+    /**
      * Método usado para buscar o título do vídeo
      * @return array
      */
     abstract public function title();
-
-    /**
-     * Método usado para buscar a duração do vídeo
-     * @return mixed
-     */
-    abstract public function duration();
 
     /**
      * Método usado para buscar o thumbnail do vídeo

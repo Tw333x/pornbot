@@ -60,6 +60,15 @@ class Bootstrap
     }
 
     /**
+     * Busca uma página aleatória para iniciar o crawler
+     * @return int
+     */
+    private function getRandomPage()
+    {
+        return mt_rand(1, 200);
+    }
+
+    /**
      * Start the bot
      */
     public function init()
@@ -67,7 +76,7 @@ class Bootstrap
         try {
             $this->isComposerInstalled();
             if ($className = $this->sortFromClasses()) {
-                \Pornbot\Core\Loader::init(['class' => $className]);
+                \Pornbot\Core\Loader::init(['class' => $className, 'page' => $this->getRandomPage()]);
             } else {
                 print 'Nenhum site encontrado';
             }
